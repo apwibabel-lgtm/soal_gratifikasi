@@ -1,0 +1,256 @@
+import { useState } from "react";
+
+const questions = [
+  {
+    id: 1,
+    soal: "Berdasarkan Peraturan KPK No. 1 Tahun 2026, berapakah nilai batas wajar gratifikasi yang TIDAK wajib dilaporkan untuk pemberian dalam konteks pertunangan, pernikahan, kelahiran, atau upacara adat/agama?",
+    pilihan: [
+      "Rp 500.000 per pemberi",
+      "Rp 1.000.000 per pemberi",
+      "Rp 1.500.000 per pemberi",
+      "Rp 2.000.000 per pemberi",
+    ],
+    jawaban: 2,
+    poin: 20,
+    pembahasan:
+      "Peraturan KPK No. 1 Tahun 2026 menaikkan batas wajar gratifikasi untuk konteks acara sosial/keagamaan (pertunangan, pernikahan, kelahiran, akikah, baptis, khitanan, potong gigi, atau upacara adat/agama lainnya) dari Rp 1.000.000 menjadi Rp 1.500.000 per pemberi. Nilai ini hanya berlaku untuk konteks acara tersebut, bukan sebagai batas umum semua jenis pemberian.",
+  },
+  {
+    id: 2,
+    soal: "Apa sikap yang WAJIB dilakukan oleh Pegawai Negeri atau Penyelenggara Negara saat menerima tawaran gratifikasi yang berkaitan dengan jabatannya berdasarkan Peraturan KPK No. 1 Tahun 2026?",
+    pilihan: [
+      "Menerima dan melaporkan dalam 30 hari kerja",
+      "Menerima dan menyimpan sebagai bukti",
+      "Menolak gratifikasi tersebut",
+      "Meminta izin atasan terlebih dahulu sebelum menerima",
+    ],
+    jawaban: 2,
+    poin: 20,
+    pembahasan:
+      "Peraturan KPK No. 1 Tahun 2026 mempertegas kewajiban Pegawai Negeri atau Penyelenggara Negara untuk MENOLAK gratifikasi yang berkaitan dengan jabatan. Ini merupakan perubahan penting dari aturan sebelumnya. Jika menolak, penolakan tersebut pun harus dilaporkan secara formal kepada KPK melalui mekanisme yang diatur dalam Pasal 4A, menggunakan prosedur dan formulir yang sama dengan pelaporan penerimaan.",
+  },
+  {
+    id: 3,
+    soal: "Berapa batas nilai wajar gratifikasi antar sesama rekan kerja (BUKAN dalam bentuk uang) yang tidak wajib dilaporkan berdasarkan Peraturan KPK No. 1 Tahun 2026?",
+    pilihan: [
+      "Rp 200.000/pemberi, total Rp 1.000.000/tahun",
+      "Rp 300.000/pemberi, total Rp 1.500.000/tahun",
+      "Rp 500.000/pemberi, total Rp 1.500.000/tahun",
+      "Rp 500.000/pemberi, total Rp 2.000.000/tahun",
+    ],
+    jawaban: 2,
+    poin: 20,
+    pembahasan:
+      "Peraturan KPK No. 1 Tahun 2026 mengubah batas wajar gratifikasi antar sesama rekan kerja (tidak dalam bentuk uang) dari Rp 200.000/pemberi (total Rp 1.000.000/tahun) menjadi Rp 500.000/pemberi dengan akumulasi maksimal Rp 1.500.000/tahun. Ketentuan ini bertujuan mencegah normalisasi pemberian berulang yang secara akumulatif dapat menimbulkan konflik kepentingan.",
+  },
+  {
+    id: 4,
+    soal: "Apa yang terjadi apabila laporan gratifikasi melewati batas waktu 30 hari kerja sejak tanggal gratifikasi diterima berdasarkan Peraturan KPK No. 1 Tahun 2026?",
+    pilihan: [
+      "Laporan tetap diproses normal tanpa konsekuensi",
+      "Gratifikasi ditetapkan menjadi milik negara dan ketentuan pidana Pasal 12B UU Tipikor tetap berlaku",
+      "Pelapor dikenakan sanksi administratif berupa teguran tertulis",
+      "Laporan otomatis ditolak dan dikembalikan ke pelapor",
+    ],
+    jawaban: 1,
+    poin: 20,
+    pembahasan:
+      "Apabila laporan gratifikasi melewati 30 hari kerja sejak tanggal penerimaan, gratifikasi tersebut ditetapkan menjadi milik negara. Yang penting, ketentuan Pasal 12B UU No. 31 Tahun 1999 jo. UU No. 20 Tahun 2001 tentang Pemberantasan Tindak Pidana Korupsi TETAP BERLAKU. Ancaman pidananya adalah penjara paling singkat 4 tahun hingga seumur hidup, dan denda Rp 200 juta hingga Rp 1 miliar. Penetapan milik negara tidak menghapus ancaman pidana.",
+  },
+  {
+    id: 5,
+    soal: "Berdasarkan Peraturan KPK No. 1 Tahun 2026, berapa batas waktu tindak lanjut kelengkapan laporan gratifikasi yang BARU sebelum laporan dinyatakan tidak ditindaklanjuti?",
+    pilihan: [
+      "Lebih dari 10 hari kerja dari tanggal lapor",
+      "Lebih dari 14 hari kerja dari tanggal lapor",
+      "Lebih dari 20 hari kerja dari tanggal lapor",
+      "Lebih dari 30 hari kerja dari tanggal penerimaan",
+    ],
+    jawaban: 2,
+    poin: 20,
+    pembahasan:
+      "Peraturan KPK No. 1 Tahun 2026 mempersingkat batas waktu kelengkapan laporan. Aturan lama (Peraturan KPK No. 2 Tahun 2019) menetapkan laporan tidak ditindaklanjuti jika tidak lengkap dalam lebih dari 30 hari kerja dari tanggal PENERIMAAN. Aturan baru menetapkan lebih dari 20 hari kerja dari tanggal LAPOR. Perubahan ini bertujuan meningkatkan efisiensi dan mendorong pelapor segera melengkapi dokumen yang diperlukan.",
+  },
+];
+
+export default function KuisGratifikasi() {
+  const [current, setCurrent] = useState(0);
+  const [selected, setSelected] = useState(null);
+  const [answered, setAnswered] = useState(false);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
+  const [showPembahasan, setShowPembahasan] = useState(false);
+  const [answers, setAnswers] = useState([]);
+
+  const q = questions[current];
+  const total = questions.length;
+  const totalPoin = questions.reduce((a, b) => a + b.poin, 0);
+
+  const pilih = (idx) => {
+    if (answered) return;
+    setSelected(idx);
+    setAnswered(true);
+    const benar = idx === q.jawaban;
+    if (benar) setScore((s) => s + q.poin);
+    setAnswers((prev) => [...prev, { benar, poin: benar ? q.poin : 0 }]);
+  };
+
+  const next = () => {
+    setSelected(null);
+    setAnswered(false);
+    setShowPembahasan(false);
+    if (current + 1 >= total) setFinished(true);
+    else setCurrent((c) => c + 1);
+  };
+
+  const reset = () => {
+    setCurrent(0); setSelected(null); setAnswered(false);
+    setScore(0); setFinished(false); setShowPembahasan(false); setAnswers([]);
+  };
+
+  const grade = () => {
+    if (score === totalPoin) return { label: "Sempurna! 🏆", color: "#16a34a" };
+    if (score >= 80) return { label: "Sangat Baik! 🥇", color: "#2563eb" };
+    if (score >= 60) return { label: "Baik 👍", color: "#d97706" };
+    return { label: "Perlu Belajar Lagi 📚", color: "#dc2626" };
+  };
+
+  const styles = {
+    wrap: { fontFamily: "'Segoe UI', sans-serif", maxWidth: 680, margin: "0 auto", padding: "24px 16px", minHeight: "100vh", background: "#f8fafc" },
+    header: { background: "linear-gradient(135deg, #dc2626, #b91c1c)", borderRadius: 16, padding: "20px 24px", marginBottom: 24, color: "#fff" },
+    headerTitle: { margin: 0, fontSize: 18, fontWeight: 700 },
+    headerSub: { margin: "4px 0 0", fontSize: 13, opacity: 0.85 },
+    progress: { background: "#fff", borderRadius: 12, padding: "12px 20px", marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.08)" },
+    progressBar: { height: 6, background: "#fee2e2", borderRadius: 99, marginTop: 8, overflow: "hidden" },
+    progressFill: { height: "100%", background: "#dc2626", borderRadius: 99, transition: "width 0.4s" },
+    card: { background: "#fff", borderRadius: 16, padding: "24px", boxShadow: "0 2px 12px rgba(0,0,0,0.08)", marginBottom: 16 },
+    badge: { display: "inline-block", background: "#fef2f2", color: "#dc2626", borderRadius: 8, padding: "4px 12px", fontSize: 12, fontWeight: 700, marginBottom: 12 },
+    soal: { fontSize: 16, fontWeight: 600, color: "#1e293b", lineHeight: 1.6, margin: "0 0 20px" },
+    pilihanBtn: (idx, answered, selected, jawaban) => ({
+      width: "100%", textAlign: "left", padding: "13px 16px", borderRadius: 10, border: "2px solid",
+      borderColor: !answered ? "#e2e8f0" : idx === jawaban ? "#16a34a" : idx === selected && selected !== jawaban ? "#dc2626" : "#e2e8f0",
+      background: !answered ? "#fff" : idx === jawaban ? "#f0fdf4" : idx === selected && selected !== jawaban ? "#fef2f2" : "#fff",
+      cursor: answered ? "not-allowed" : "pointer", fontSize: 14, color: "#334155",
+      marginBottom: 10, display: "flex", alignItems: "center", gap: 10, transition: "all 0.2s",
+    }),
+    icon: (idx, answered, selected, jawaban) => ({
+      width: 26, height: 26, borderRadius: "50%", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700,
+      background: !answered ? "#f1f5f9" : idx === jawaban ? "#16a34a" : idx === selected && selected !== jawaban ? "#dc2626" : "#f1f5f9",
+      color: !answered ? "#64748b" : idx === jawaban || (idx === selected && selected !== jawaban) ? "#fff" : "#64748b",
+    }),
+    pembahasan: { background: "#f0fdf4", border: "1px solid #bbf7d0", borderRadius: 10, padding: 16, marginTop: 4 },
+    pembahasanTitle: { color: "#15803d", fontWeight: 700, fontSize: 13, marginBottom: 6 },
+    pembahasanText: { color: "#166534", fontSize: 13, lineHeight: 1.65, margin: 0 },
+    btnRow: { display: "flex", gap: 10, marginTop: 16, flexWrap: "wrap" },
+    btn: (color = "#dc2626") => ({ padding: "11px 22px", borderRadius: 10, border: "none", background: color, color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" }),
+    btnOutline: { padding: "11px 22px", borderRadius: 10, border: "2px solid #dc2626", background: "#fff", color: "#dc2626", fontWeight: 700, fontSize: 14, cursor: "pointer" },
+    hasil: { textAlign: "center", padding: "32px 24px" },
+    skor: (color) => ({ fontSize: 64, fontWeight: 800, color, margin: "8px 0" }),
+    table: { width: "100%", borderCollapse: "collapse", marginTop: 16 },
+    th: { background: "#f1f5f9", padding: "10px 12px", fontSize: 13, fontWeight: 700, color: "#475569", textAlign: "left" },
+    td: { padding: "10px 12px", fontSize: 13, color: "#334155", borderBottom: "1px solid #f1f5f9" },
+  };
+
+  const letters = ["A", "B", "C", "D"];
+
+  if (finished) {
+    const g = grade();
+    return (
+      <div style={styles.wrap}>
+        <div style={styles.header}>
+          <p style={styles.headerTitle}>📋 Kuis Gratifikasi</p>
+          <p style={styles.headerSub}>Peraturan KPK Nomor 1 Tahun 2026</p>
+        </div>
+        <div style={{ ...styles.card, ...styles.hasil }}>
+          <div style={{ fontSize: 48 }}>🎉</div>
+          <h2 style={{ margin: "8px 0 4px", color: "#1e293b" }}>Kuis Selesai!</h2>
+          <p style={{ color: "#64748b", margin: 0 }}>{g.label}</p>
+          <div style={styles.skor(g.color)}>{score}<span style={{ fontSize: 28, color: "#94a3b8" }}>/{totalPoin}</span></div>
+          <p style={{ color: "#64748b", marginBottom: 24 }}>Nilai Anda: <b style={{ color: g.color }}>{score}%</b> dari total {totalPoin} poin</p>
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Soal</th>
+                <th style={styles.th}>Status</th>
+                <th style={styles.th}>Poin</th>
+              </tr>
+            </thead>
+            <tbody>
+              {answers.map((a, i) => (
+                <tr key={i}>
+                  <td style={styles.td}>Soal {i + 1}</td>
+                  <td style={styles.td}>{a.benar ? "✅ Benar" : "❌ Salah"}</td>
+                  <td style={styles.td}><b style={{ color: a.benar ? "#16a34a" : "#dc2626" }}>{a.poin}/{questions[i].poin}</b></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div style={{ marginTop: 24 }}>
+            <button style={styles.btn()} onClick={reset}>🔄 Ulangi Kuis</button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={styles.wrap}>
+      <div style={styles.header}>
+        <p style={styles.headerTitle}>📋 Kuis Gratifikasi</p>
+        <p style={styles.headerSub}>Peraturan KPK Nomor 1 Tahun 2026</p>
+      </div>
+      <div style={styles.progress}>
+        <div>
+          <span style={{ fontWeight: 700, color: "#1e293b" }}>Soal {current + 1}</span>
+          <span style={{ color: "#94a3b8" }}> / {total}</span>
+        </div>
+        <div style={{ fontWeight: 700, color: "#dc2626" }}>Skor: {score} poin</div>
+      </div>
+      <div style={{ ...styles.progress, display: "block", padding: "8px 20px 14px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#94a3b8", marginBottom: 4 }}>
+          <span>Progress</span><span>{Math.round(((current) / total) * 100)}%</span>
+        </div>
+        <div style={styles.progressBar}>
+          <div style={{ ...styles.progressFill, width: `${(current / total) * 100}%` }} />
+        </div>
+      </div>
+      <div style={styles.card}>
+        <span style={styles.badge}>Soal {current + 1} • {q.poin} Poin</span>
+        <p style={styles.soal}>{q.soal}</p>
+        {q.pilihan.map((p, idx) => (
+          <button key={idx} style={styles.pilihanBtn(idx, answered, selected, q.jawaban)} onClick={() => pilih(idx)}>
+            <span style={styles.icon(idx, answered, selected, q.jawaban)}>
+              {!answered ? letters[idx] : idx === q.jawaban ? "✓" : idx === selected ? "✗" : letters[idx]}
+            </span>
+            {p}
+          </button>
+        ))}
+        {answered && (
+          <div>
+            <div style={{ ...styles.card, padding: 0, boxShadow: "none", marginBottom: 0 }}>
+              <div style={{ padding: "10px 0 0", display: "flex", alignItems: "center", gap: 8 }}>
+                {selected === q.jawaban
+                  ? <span style={{ color: "#16a34a", fontWeight: 700, fontSize: 15 }}>✅ Jawaban Benar! +{q.poin} poin</span>
+                  : <span style={{ color: "#dc2626", fontWeight: 700, fontSize: 15 }}>❌ Jawaban Salah. +0 poin</span>}
+              </div>
+            </div>
+            {showPembahasan && (
+              <div style={styles.pembahasan}>
+                <div style={styles.pembahasanTitle}>💡 Pembahasan Detail:</div>
+                <p style={styles.pembahasanText}>{q.pembahasan}</p>
+              </div>
+            )}
+            <div style={styles.btnRow}>
+              <button style={styles.btnOutline} onClick={() => setShowPembahasan((v) => !v)}>
+                {showPembahasan ? "🔼 Sembunyikan" : "💡 Lihat Pembahasan"}
+              </button>
+              <button style={styles.btn()} onClick={next}>
+                {current + 1 >= total ? "Lihat Hasil 🏁" : "Soal Berikutnya →"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
